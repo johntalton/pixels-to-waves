@@ -6,6 +6,21 @@ body {
   /* flex-wrap: nowrap; */
 }
 
+
+@keyframes rotate {
+  0% {
+    --wave-color: red;
+  }
+
+  50% {
+    --wave-color: blue;
+  }
+
+  100% {
+    --wave-color: green;
+  }
+}
+
 canvas {
   --wave-color: firebrick;
 
@@ -16,6 +31,8 @@ canvas {
   max-width: min(100%, 800px);
   /* max-height: 85%; */
   /* aspect-ratio: 16 / 9; */
+
+  animation: 10s infinite alternate rotate;
 }
 
 img {

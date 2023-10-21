@@ -34,7 +34,7 @@ function getSourceImageData(source) {
 function getGreys(imageData) {
 	const { data, height, width } = imageData
 
-	console.log('grays size', height, width)
+	// console.log('grays size', height, width)
 
 	return Array.from({ length: width * height }, (_, i) => {
 		const pixelIndex = i * 4
@@ -55,6 +55,18 @@ async function setup() {
 
 	context.imageSmoothingEnabled = true
 
+	if(false) {
+		const colors = [
+			'firebrick', 'green', 'blue', 'cyan', 'purple', 'black'
+		]
+		setInterval(() => {
+			const i = Math.floor(Math.random() * (colors.length - 1))
+			const color = colors[i]
+			canvas.style.setProperty('--wave-color', color)
+		}, 1000 * 5)
+	}
+
+
 	const sourceElem = document.getElementById('source')
 
 	return new Promise(resolve => {
@@ -63,7 +75,7 @@ async function setup() {
 			const greys = getGreys(sourceImageData)
 			resolve({
 				canvas, context, sourceImageData,
-				lineCount: 100,
+				lineCount: 80,
 				greys
 			})
 		}
@@ -109,7 +121,7 @@ function strokeWave(config, y, freq, phase, maxAmplitude, time) {
 
 function render(config, time) {
 	const styles = getComputedStyle(config.canvas)
-	const color = styles.getPropertyValue('--wave-color')
+	const color = styles.getPropertyValue('--wave-color') || 'black'
 
 	const { width, height } = config.canvas
 	const lineHeight = height / config.lineCount
@@ -118,8 +130,8 @@ function render(config, time) {
 	config.context.clearRect(0, 0, width, height)
 
 	const freq = mapRange(Math.sin(time / 620), -1, 1, 20, 200)
-	const phase = 0 //time / 500
-	const maxAmplitude = lineHeight / 2
+	const phase = time / 10
+	const maxAmplitude = lineHeight / 2  * 1.5
 
 	for (let line = 0; line < config.lineCount; line++) {
 		const y = line * lineHeight + lineHeight / 2
