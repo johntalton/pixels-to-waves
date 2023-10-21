@@ -12,6 +12,23 @@ function mapRange(v, a, b, c, d) {
 // console.log(mapRange(25, 0, 100, 0, 2))
 // console.log(mapRange(25, 0, 100, 10, 20))
 
+function getSourceImageData(source) {
+  const { width, height } = source
+
+  const offscreen = new OffscreenCanvas(width, height)
+  const offscreenContext = offscreen.getContext('2d', {
+    alpha: true,
+    colorSpace: 'display-p3'
+  })
+  offscreenContext.imageSmoothingEnabled = false
+
+  offscreenContext.drawImage(source, 0, 0, width, height)
+
+  const imageData = offscreenContext.getImageData(0, 0, width, height)
+
+  return imageData
+}
+
 function setup() {
   const canvas = document.getElementById('canvas')
 	const context = canvas.getContext('2d', {
@@ -21,8 +38,10 @@ function setup() {
 
 	context.imageSmoothingEnabled = true
 
+  const sourceImageData = getSourceImageData(document.getElementById('source'))
+
   return {
-    canvas, context
+    canvas, context, sourceImageData
   }
 }
 

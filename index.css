@@ -1,6 +1,9 @@
 
-html {
+body {
   background-color: grey;
+  display: flex;
+  flex-direction: row;
+  /* flex-wrap: nowrap; */
 }
 
 canvas {
@@ -9,4 +12,8 @@ canvas {
   max-width: min(100%, 1600px);
   max-height: 85%;
   aspect-ratio: 16 / 9;
+}
+
+img {
+  max-width: 100%;
 }
