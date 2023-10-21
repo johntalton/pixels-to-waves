@@ -1,18 +1,16 @@
 
 function lerp(t, a, b) {
-  t * (a + (b - a))
+  return t * (a + (b - a))
 }
 
-// map a value `v` from domain a-b to domain c-d
 function mapRange(v, a, b, c, d) {
-  // return lerp((v - a) / (b - a), c, d)
-  // return (v - a) / (b - a) * (c + (d - c))
-  return (v - a) / (b - a) * (d - c) + c
+  return lerp((v - a) / (b - a), c, d)
+  // return (v - a) / (b - a) * (d - c) + c
 }
 
-console.log(mapRange(5, 0, 10, 0, 1))
-console.log(mapRange(25, 0, 100, 0, 2))
-console.log(mapRange(25, 0, 100, 10, 20))
+// console.log(mapRange(5, 0, 10, 0, 1))
+// console.log(mapRange(25, 0, 100, 0, 2))
+// console.log(mapRange(25, 0, 100, 10, 20))
 
 function setup() {
   const canvas = document.getElementById('canvas')
@@ -28,16 +26,19 @@ function setup() {
   }
 }
 
-function render(config) {
+function render(config, time) {
   const { width, height } = config.canvas
 
   config.context.strokeStyle = 'white'
+  config.context.clearRect(0, 0, width, height)
 
   let prevPoint = { x: -1, y: height / 2 }
 
   for(let x = 0; x < width; x++) {
     const angle = mapRange(x, 0, width, 0, Math.PI * 2)
-    const sinValue = Math.sin(angle)
+    const freq = 10
+    const phase = time / 120
+    const sinValue = Math.sin(phase + angle * freq)
     const amplitude = height / 2
     const point = {
       x: x,
@@ -53,6 +54,7 @@ function render(config) {
 
   }
 
+  requestAnimationFrame(time => render(config, time))
 }
 
 async function onContentLoaded() {
