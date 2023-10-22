@@ -4,8 +4,8 @@ function lerp(t, a, b) {
 }
 
 function mapRange(v, a, b, c, d) {
-	return lerp((v - a) / (b - a), c, d)
-	// return (v - a) / (b - a) * (d - c) + c
+	// return lerp((v - a) / (b - a), c, d)
+	return (v - a) / (b - a) * (d - c) + c
 }
 
 // console.log(mapRange(5, 0, 10, 0, 1))
@@ -75,7 +75,7 @@ async function setup() {
 			const greys = getGreys(sourceImageData)
 			resolve({
 				canvas, context, sourceImageData,
-				lineCount: 80,
+				lineCount: 50,
 				greys
 			})
 		}
@@ -95,12 +95,18 @@ function strokeWave(config, y, freq, phase, maxAmplitude, time) {
 	const { width, height } = config.canvas
 	const { greys } = config
 
+	const gWidth = 800
+	const gHeight = 650
+
 	let prevPoint = { x: -1, y }
 	for(let x = 0; x < width; x++) {
-		const grayIndex = Math.floor(y) * width + x
+		const gx = Math.floor(mapRange(x, 0, width, 0, gWidth))
+		const gy = Math.floor(mapRange(y, 0, height, 0, gHeight))
+
+		const grayIndex = Math.floor(gy * gWidth + gx)
 		const grey = greys[grayIndex]
 
-	  const angle = mapRange(x, 0, width, 0, Math.PI * 2)
+	  const angle = mapRange(gx, 0, gWidth, 0, Math.PI * 2)
 	  const sinValue = Math.sin(phase + angle * freq)
 	  const amplitude = mapRange(grey, 0, 255, maxAmplitude, 0)
 	  const point = {
@@ -108,7 +114,7 @@ function strokeWave(config, y, freq, phase, maxAmplitude, time) {
 	    y: y + sinValue * amplitude
 	  }
 
-		if(amplitude > 0.15) {
+		if(amplitude > 0.25) {
 			config.context.beginPath()
 			config.context.moveTo(prevPoint.x, prevPoint.y)
 			config.context.lineTo(point.x, point.y)
@@ -129,17 +135,20 @@ function render(config, time) {
 	config.context.strokeStyle = 'white'
 	config.context.clearRect(0, 0, width, height)
 
-	const freq = mapRange(Math.sin(time / 620), -1, 1, 20, 200)
-	const phase = time / 10
-	const maxAmplitude = lineHeight / 2  * 1.5
+	const freq = mapRange(Math.sin(time / 1000), -1, 1, 0, 300)
+	const phase = 0 //time / 10000
+	const maxAmplitude = lineHeight / 2 * 1.2
 
 	for (let line = 0; line < config.lineCount; line++) {
 		const y = line * lineHeight + lineHeight / 2
 
-		// config.context.beginPath()
-    // config.context.moveTo(0, y)
-    // config.context.lineTo(width, y)
-    // config.context.stroke()
+		if(false) {
+			config.context.strokeStyle = 'black'
+			config.context.beginPath()
+			config.context.moveTo(0, y)
+			config.context.lineTo(width, y)
+			config.context.stroke()
+		}
 
 		config.context.strokeStyle = color
 		strokeWave(config, y, freq, phase, maxAmplitude, time)
