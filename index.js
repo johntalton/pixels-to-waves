@@ -8,13 +8,45 @@ function mapRange(v, a, b, c, d) {
 	return (v - a) / (b - a) * (d - c) + c
 }
 
-// console.log(mapRange(5, 0, 10, 0, 1))
-// console.log(mapRange(25, 0, 100, 0, 2))
-// console.log(mapRange(25, 0, 100, 10, 20))
+function handleForm(config, event) {
+	const { target: input } = event
+	const [ file ] = input.files
 
-function getSourceImageData(source) {
-	const { naturalWidth: width, naturalHeight: height } = source
+	event.preventDefault()
+	event.stopPropagation()
 
+	input.disabled = true
+
+	createImageBitmap(file)
+		.then(imageBitmap => {
+			input.disabled = false
+
+			//
+			const preview = document.getElementById('preview')
+			const previewContext = preview.getContext('2d', {
+				alpha: true,
+				colorSpace: 'display-p3'
+			})
+
+			previewContext.clearRect(0, 0, preview.width, preview.height)
+			previewContext.drawImage(imageBitmap,
+				0, 0,imageBitmap.width, imageBitmap.height,
+				0, 0, preview.width, preview.height)
+
+			//
+			const sourceImageData = getSourceImageData(imageBitmap, imageBitmap.width, imageBitmap.height)
+			config.greys = getGreys(sourceImageData)
+			config.greyWidth = sourceImageData.width
+			config.greyHeight = sourceImageData.height
+
+			//
+			console.log('start animation')
+			requestAnimationFrame(time => render(config, time))
+		})
+		.catch(e => console.warn(e))
+}
+
+function getSourceImageData(source, width, height) {
 	// console.log('source size', height, width)
 
 	const offscreen = new OffscreenCanvas(width, height)
@@ -46,7 +78,8 @@ function getGreys(imageData) {
 	})
 }
 
-async function setup() {
+function setup() {
+	//
 	const canvas = document.getElementById('canvas')
 	const context = canvas.getContext('2d', {
 		alpha: true,
@@ -55,48 +88,18 @@ async function setup() {
 
 	context.imageSmoothingEnabled = true
 
-	if(false) {
-		const colors = [
-			'firebrick', 'green', 'blue', 'cyan', 'purple', 'black'
-		]
-		setInterval(() => {
-			const i = Math.floor(Math.random() * (colors.length - 1))
-			const color = colors[i]
-			canvas.style.setProperty('--wave-color', color)
-		}, 1000 * 5)
+	return {
+		canvas, context,
+		lineCount: 50
 	}
-
-
-	const sourceElem = document.getElementById('source')
-
-	return new Promise(resolve => {
-		const commonResolve = () => {
-			const sourceImageData = getSourceImageData(sourceElem)
-			const greys = getGreys(sourceImageData)
-			resolve({
-				canvas, context, sourceImageData,
-				lineCount: 50,
-				greys
-			})
-		}
-
-		if (sourceElem.complete) {
-			commonResolve()
-			return
-		}
-
-		sourceElem.addEventListener('load', event => {
-			commonResolve()
-		}, { once: true })
-	})
 }
 
 function strokeWave(config, y, freq, phase, maxAmplitude, time) {
 	const { width, height } = config.canvas
 	const { greys } = config
 
-	const gWidth = 800
-	const gHeight = 650
+	const gWidth = config.greyWidth
+	const gHeight = config.greyHeight
 
 	let prevPoint = { x: -1, y }
 	for(let x = 0; x < width; x++) {
@@ -159,8 +162,12 @@ function render(config, time) {
 }
 
 async function onContentLoaded() {
-	const config = await setup()
-	requestAnimationFrame(time => render(config, time))
+	const config = setup()
+
+	//
+	globalThis.handleForm = event => handleForm(config, event)
+
+	// requestAnimationFrame(time => render(config, time))
 }
 
 const syncOnContentLoaded = () => {

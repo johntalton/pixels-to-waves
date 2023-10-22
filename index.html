@@ -14,9 +14,14 @@
 		<script async defer type="module" src="index.js"></script>
 	</head>
 	<body>
+		<nav>
+			<form method="dialog" onchange="handleForm(event)">
+				<label for="sourcePicker">Source</label>
+				<input id="sourcePicker" name="sourcePicker" type="file" accept="image/*" />
+			</form>
+		</nav>
 		<aside>
-			<!-- <img id="source" src="./tool.png" /> -->
-			<img id="source" src="./gameboy.jpg" />
+			<canvas id="preview" width="160" height="90"></canvas>
 		</aside>
 		<main>
 			<canvas id="canvas" width="1600" height="900"></canvas>
