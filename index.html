@@ -12,13 +12,13 @@
 		<script async defer type="module" src="index.js"></script>
 	</head>
 	<body>
-		<nav>
+		<header>
 			<form method="dialog" onchange="handleForm(event)">
 				<label for="sourcePicker">Source</label>
 				<input id="sourcePicker" name="sourcePicker" type="file" accept="image/*" />
 			</form>
 			<button id="togglePreview" onclick="document.getElementById('sectionPreview').toggleAttribute('data-preview')">⏏</button>
-		</nav>
+		</header>
 		<aside>
 		</aside>
 		<main>
