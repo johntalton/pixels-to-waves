@@ -1,35 +1,100 @@
 
-body {
-  background-color: grey;
-  display: grid;
-  grid-template-areas: "nav nav" "preview wave";
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: min-content 1fr;
-  gap: 1em;
+
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+
+	font-size: inherit;
+	font-family: inherit;
 }
 
-nav { grid-area: nav; }
-aside { grid-area: preview; }
-main { grid-area: wave; }
+body {
+	background-color: #bababa;
+	color: black;
+
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+	display: flex;
+	flex-direction: column;
+}
+
+nav {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	margin-block: 1em;
+	padding-inline: 1em;
+}
+
+form {
+	display: flex;
+	gap: 1em;
+}
+
+button#togglePreview {
+	padding-block: 0.5em;
+	padding-inline: 2ch;
+}
+
+main {
+	display: flex;
+	flex-direction: row;
+
+	padding-inline: 0.5em;
+	width: 100%;
+
+	gap: 0;
+	transition: gap 500ms;
+}
+
+main:has(section#sectionPreview[data-preview]) {
+	gap: 1em;
+}
+
+main:has(section#sectionPreview[data-preview]) > section {
+	width: 50%;
+}
+
+section {
+	width: 100%;
+	transition: width 500ms;
+}
+
+section#sectionPreview {
+	width: 0;
+
+	&[data-preview] {
+		& > canvas {
+			transform: translateX(0);
+		}
+	}
+
+	& > canvas {
+		transform: translateX(-500%) scale(5);
+		transition: transform 300ms ease-in-out;
+	}
+}
+
 
 canvas {
-  --wave-color: firebrick;
+	--wave-color: firebrick;
 
-  background-color: white;
+	background-color: whitesmoke;
+	max-width: 100%;
+	width: 100%;
 
-  max-width: 100%;
-  /* max-width: min(100%, 1600px); */
-  /* max-width: min(100%, 800px); */
-  /* max-height: 85%; */
-  /* aspect-ratio: 16 / 9; */
+	box-shadow: 0 2px 4px rgb(0 0 0 / 0.125);
 }
 
-canvas#preview {
-  width: 100%;
-  height: 100%;
-}
+@media (max-width: 800px){
+	main {
+		flex-direction: column;
+		align-items: center;
+	}
 
-img {
-  max-width: 100%;
-  min-width: 4em;
+	main:has(section#sectionPreview[data-preview]) > section {
+		width: 75%;
+	}
 }

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html>
+<html lang="US-EN">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 		<meta content="dark" name="color-scheme">
@@ -19,14 +17,17 @@
 				<label for="sourcePicker">Source</label>
 				<input id="sourcePicker" name="sourcePicker" type="file" accept="image/*" />
 			</form>
+			<button id="togglePreview" onclick="document.getElementById('sectionPreview').toggleAttribute('data-preview')">⏏</button>
 		</nav>
 		<aside>
-			<canvas id="preview" width="160" height="90"></canvas>
 		</aside>
 		<main>
-			<canvas id="canvas" width="1600" height="900"></canvas>
-			<!-- <canvas id="canvas" width="800" height="650"></canvas> -->
-			<!-- <canvas id="canvas" width="32" height="32"></canvas> -->
+			<section id="sectionPreview">
+				<canvas id="preview" width="320" height="180"></canvas>
+			</section>
+			<section>
+				<canvas id="canvas" width="1600" height="900"></canvas>
+			</section>
 		</main>
 	</body>
 </html>
